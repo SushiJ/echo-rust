@@ -3,24 +3,26 @@ use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() {
-    // Initiat listener
+    // Initiate listener, Echo server
     let listener = TcpListener::bind("localhost:8080").await.unwrap();
     //Connect Multiple Clients
     loop {
         let (mut socket, _addr) = listener.accept().await.unwrap();
+        // async block
+        tokio::spawn(async move {
+            let (reader, mut writer) = socket.split();
 
-        let (reader, mut writer) = socket.split();
-
-        let mut reader = BufReader::new(reader);
-        let mut line = String::new();
-        // Write the buffer to the Clients
-        loop {
-            let bytes_read = reader.read_line(&mut line).await.unwrap();
-            if bytes_read == 0 {
-                break;
+            let mut reader = BufReader::new(reader);
+            let mut line = String::new();
+            // Write the buffer to the Clients
+            loop {
+                let bytes_read = reader.read_line(&mut line).await.unwrap();
+                if bytes_read == 0 {
+                    break;
+                }
+                writer.write_all(&line.as_bytes()).await.unwrap();
+                line.clear();
             }
-            writer.write_all(&line.as_bytes()).await.unwrap();
-            line.clear();
-        }
+        });
     }
 }
