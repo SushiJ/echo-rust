@@ -1,8 +1,4 @@
-# Chat server made in rust. 
-
-## To interact: 
-
-### Clone: `git clone git@github.com:SushiJ/Rust-chat-server.git`
+echo server in rust. 
 
 ### Run: `cargo run`
 
